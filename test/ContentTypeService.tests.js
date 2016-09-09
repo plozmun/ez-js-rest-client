@@ -219,24 +219,44 @@ define(function (require) {
                 );
             });
 
-            it("loadContentTypes", function () {
+            describe('loadContentTypes', function () {
+                it("should load the Content Type Infos", function () {
+                    spyOn(contentTypeService, 'loadContentTypeGroup').andCallFake(fakedLoadContentTypeGroup);
 
-                spyOn(contentTypeService, 'loadContentTypeGroup').andCallFake(fakedLoadContentTypeGroup);
+                    contentTypeService.loadContentTypes(
+                        testContentTypeGroupId,
+                        mockCallback
+                    );
 
-                contentTypeService.loadContentTypes(
-                    testContentTypeGroupId,
-                    mockCallback
-                );
+                    expect(mockConnectionManager.request).toHaveBeenCalledWith(
+                        "GET",
+                        testContentTypeGroupTypes,
+                        "",
+                        {Accept: "application/vnd.ez.api.ContentTypeInfoList+json"},
+                        mockCallback
+                    );
+                });
 
-                expect(mockConnectionManager.request).toHaveBeenCalledWith(
-                    "GET",
-                    testContentTypeGroupTypes,
-                    "",
-                    {Accept: "application/vnd.ez.api.ContentTypeInfoList+json"},
-                    mockCallback
-                );
+                it("should load the Content Types", function () {
+                    var typeHeader = "application/vnd.ez.api.ContentTypeList+json";
+
+                    spyOn(contentTypeService, 'loadContentTypeGroup').andCallFake(fakedLoadContentTypeGroup);
+
+                    contentTypeService.loadContentTypes(
+                        testContentTypeGroupId,
+                        typeHeader,
+                        mockCallback
+                    );
+
+                    expect(mockConnectionManager.request).toHaveBeenCalledWith(
+                        "GET",
+                        testContentTypeGroupTypes,
+                        "",
+                        {Accept: typeHeader},
+                        mockCallback
+                    );
+                });
             });
-
 
             // ******************************
             // Content Type Management

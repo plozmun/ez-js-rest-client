@@ -230,15 +230,24 @@ define(["structures/ContentTypeGroupInputStruct", "structures/ContentTypeCreateS
     };
 
     /**
-     * List content for a content type group
+     * Loads Content Types Info or Content Types in a given Content Type Group.
      *
      * @method loadContentTypes
      * @param contentTypeGroupId {String} target content type group identifier (e.g. "/api/ezp/v2/content/typegroups/1")
+     * @param [acceptHeader] {String} Optional accept header value. Set it to
+     * `application/vnd.ez.api.ContentTypeList+json` to load the Content Types
+     * otherwise the default accept is used and this methods loads the Content
+     * Types Info instead.
      * @param callback {Function} callback executed after performing the request (see
      *  {{#crossLink "ContentTypeService"}}Note on the callbacks usage{{/crossLink}} for more info)
      */
-    ContentTypeService.prototype.loadContentTypes = function (contentTypeGroupId, callback) {
+    ContentTypeService.prototype.loadContentTypes = function (contentTypeGroupId, acceptHeader, callback) {
         var that = this;
+
+        if ( !callback ) {
+            callback = acceptHeader;
+            acceptHeader = null;
+        }
 
         this.loadContentTypeGroup(
             contentTypeGroupId,
@@ -254,7 +263,7 @@ define(["structures/ContentTypeGroupInputStruct", "structures/ContentTypeCreateS
                     "GET",
                      contentTypeGroup.ContentTypes._href,
                     "",
-                    {"Accept": contentTypeGroup.ContentTypes["_media-type"]},
+                    {"Accept": acceptHeader ? acceptHeader : contentTypeGroup.ContentTypes["_media-type"]},
                     callback
                 );
             }
